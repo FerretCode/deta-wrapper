@@ -87,7 +87,7 @@ class Base {
      * @param {object} updates - The updates to apply to the item.
      * @returns {Promise} - A promise that resolves when the operation is complete.
      */
-    this.update = (key, updates) =>
+    this.update = (updates, key) =>
       new Promise(async (resolve, reject) => {
         try {
           const db = client.db(this.db);
