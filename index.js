@@ -4,7 +4,7 @@ const { MongoClient, ServerApiVersion } = require("mongodb");
  * @param {string} connectionUri - The connection URI for MongoDB.
  * @returns {Deta} - An instance of the Deta class.
  */
-module.exports.Deta = function(connectionUri) {
+module.exports.Deta = function (connectionUri) {
   return new Deta(connectionUri);
 };
 
@@ -44,9 +44,8 @@ class Base {
     this.db = "deta";
 
     this._inactiveTime = 0;
-    this._inactiveCounter = this._createInactiveCounter();
 
-    this._createInactiveCounter = () => {
+    this._createInactiveCounter = function () {
       return setInterval(() => {
         if (this._inactiveTime >= 30) {
           client.close();
@@ -60,7 +59,7 @@ class Base {
       }, 1000);
     };
 
-    this._resetInactiveCounter = () => {
+    this._resetInactiveCounter = function () {
       if (this._inactiveCounter) {
         clearInterval(this._inactiveCounter);
       }
@@ -68,6 +67,8 @@ class Base {
       this._inactiveTime = 0;
       this._inactiveCounter = this._createInactiveCounter();
     };
+
+    this._inactiveCounter = this._createInactiveCounter();
 
     /**
      * Puts an item into the collection.
