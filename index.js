@@ -4,7 +4,7 @@ const { MongoClient, ServerApiVersion } = require("mongodb");
  * @param {string} connectionUri - The connection URI for MongoDB.
  * @returns {Deta} - An instance of the Deta class.
  */
-module.exports.Deta = function (connectionUri) {
+module.exports.Deta = function(connectionUri) {
   return new Deta(connectionUri);
 };
 
@@ -72,15 +72,18 @@ class Base {
     /**
      * Puts an item into the collection.
      * @param {object} item - The item to put into the collection.
+     * @param {string} key - The key to the item
      * @returns {Promise} - A promise that resolves with the document when the operation is complete.
      */
-    this.put = (item) =>
+    this.put = (item, key) =>
       new Promise(async (resolve, reject) => {
         try {
           this._resetInactiveCounter();
 
           const db = client.db(this.db);
           const coll = db.collection(this.collection);
+
+          item.key = key;
 
           const document = await coll.insertOne(item);
 
