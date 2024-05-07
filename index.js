@@ -64,6 +64,8 @@ class Base {
         clearInterval(this._inactiveCounter);
       }
 
+      client.connect();
+
       this._inactiveTime = 0;
       this._inactiveCounter = this._createInactiveCounter();
     };
@@ -88,8 +90,6 @@ class Base {
 
           const document = await coll.insertOne(item);
 
-          this._resetInactiveCounter();
-
           resolve(document);
         } catch (err) {
           reject(err);
@@ -104,12 +104,12 @@ class Base {
     this.get = (key) =>
       new Promise(async (resolve, reject) => {
         try {
+          this._resetInactiveCounter();
+
           const db = client.db(this.db);
           const coll = db.collection(this.collection);
 
           const item = await coll.findOne({ key });
-
-          this._resetInactiveCounter();
 
           resolve(item);
         } catch (err) {
@@ -126,12 +126,12 @@ class Base {
     this.update = (updates, key) =>
       new Promise(async (resolve, reject) => {
         try {
+          this._resetInactiveCounter();
+
           const db = client.db(this.db);
           const coll = db.collection(this.collection);
 
           const document = await coll.updateOne({ key }, { $set: updates });
-
-          this._resetInactiveCounter();
 
           resolve(document);
         } catch (err) {
@@ -147,12 +147,12 @@ class Base {
     this.delete = (key) =>
       new Promise(async (resolve, reject) => {
         try {
+          this._resetInactiveCounter();
+
           const db = client.db(this.db);
           const coll = db.collection(this.collection);
 
           const document = await coll.deleteOne({ key });
-
-          this._resetInactiveCounter();
 
           resolve(document);
         } catch (err) {
@@ -168,6 +168,8 @@ class Base {
     this.fetch = (query) =>
       new Promise(async (resolve, reject) => {
         try {
+          this._resetInactiveCounter();
+
           const db = client.db(this.db);
           const coll = db.collection(this.collection);
 
@@ -231,8 +233,6 @@ class Base {
           const results = coll.find(fetchOptions);
 
           const arr = await results.toArray();
-
-          this._resetInactiveCounter();
 
           resolve(arr);
         } catch (err) {
