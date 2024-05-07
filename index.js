@@ -43,6 +43,32 @@ class Base {
     this.connected = false;
     this.db = "deta";
 
+    this._inactiveTime = 0;
+    this._inactiveCounter = this._createInactiveCounter();
+
+    this._createInactiveCounter = () => {
+      return setInterval(() => {
+        if (this._inactiveTime >= 30) {
+          client.close();
+
+          clearInterval(this._inactiveCounter);
+
+          return;
+        }
+
+        this._inactiveTime++;
+      }, 1000);
+    };
+
+    this._resetInactiveCounter = () => {
+      if (this._inactiveCounter) {
+        clearInterval(this._inactiveCounter);
+      }
+
+      this._inactiveTime = 0;
+      this._inactiveCounter = this._createInactiveCounter();
+    };
+
     /**
      * Puts an item into the collection.
      * @param {object} item - The item to put into the collection.
@@ -51,10 +77,14 @@ class Base {
     this.put = (item) =>
       new Promise(async (resolve, reject) => {
         try {
+          this._resetInactiveCounter();
+
           const db = client.db(this.db);
           const coll = db.collection(this.collection);
 
           const document = await coll.insertOne(item);
+
+          this._resetInactiveCounter();
 
           resolve(document);
         } catch (err) {
@@ -74,6 +104,8 @@ class Base {
           const coll = db.collection(this.collection);
 
           const item = await coll.findOne({ key });
+
+          this._resetInactiveCounter();
 
           resolve(item);
         } catch (err) {
@@ -95,6 +127,8 @@ class Base {
 
           const document = await coll.updateOne({ key }, { $set: updates });
 
+          this._resetInactiveCounter();
+
           resolve(document);
         } catch (err) {
           reject(err);
@@ -113,6 +147,8 @@ class Base {
           const coll = db.collection(this.collection);
 
           const document = await coll.deleteOne({ key });
+
+          this._resetInactiveCounter();
 
           resolve(document);
         } catch (err) {
@@ -191,6 +227,8 @@ class Base {
           const results = coll.find(fetchOptions);
 
           const arr = await results.toArray();
+
+          this._resetInactiveCounter();
 
           resolve(arr);
         } catch (err) {
