@@ -2,10 +2,11 @@ const { MongoClient, ServerApiVersion } = require("mongodb");
 
 /**
  * @param {string} connectionUri - The connection URI for MongoDB.
+ * @param {string} db - The name of the MongoDB database to connect to
  * @returns {Deta} - An instance of the Deta class.
  */
-module.exports.Deta = function (connectionUri) {
-  return new Deta(connectionUri);
+module.exports.Deta = function (connectionUri, db) {
+  return new Deta(connectionUri, db);
 };
 
 class Deta {
