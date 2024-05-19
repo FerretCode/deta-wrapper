@@ -16,6 +16,8 @@ class Deta {
     this.connectionUri = connectionUri;
 
     const client = new MongoClient(this.connectionUri, {
+      minPoolSize: 1,
+      maxPoolSize: 50,
       serverApi: {
         version: ServerApiVersion.v1,
         strict: true,
