@@ -12,7 +12,7 @@ class Deta {
   /**
    * @param {string} connectionUri - The connection URI for MongoDB.
    */
-  constructor(connectionUri) {
+  constructor(connectionUri, db) {
     this.connectionUri = connectionUri;
 
     const client = new MongoClient(this.connectionUri, {
@@ -28,7 +28,7 @@ class Deta {
      * @returns {Base} - An instance of the Base class.
      */
     this.Base = (collection) => {
-      return new Base(collection, client);
+      return new Base(collection, client, db);
     };
   }
 }
@@ -38,10 +38,12 @@ class Base {
    * @param {string} collection - The collection name.
    * @param {MongoClient} client - The MongoClient instance.
    */
-  constructor(collection, client) {
+  constructor(collection, client, db) {
     this.collection = collection;
     this.connected = false;
-    this.db = "deta";
+
+    if (db) this.db = db;
+    else this.db = "deta";
 
     this._inactiveTime = 0;
 
